@@ -3,12 +3,22 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.forms import ModelForm
 
-from .models import *
+from .models import Auction, User, Category
+from django import forms
+
+
+class NewListingForm(ModelForm):
+    class Meta:
+        model = Auction
+        exclude = ['user','price', ]
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html",{
+        "listings": Auction.objects.all()
+    })
 
 
 def login_view(request):
@@ -22,6 +32,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
+            request.user = user
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "auctions/login.html", {
@@ -62,18 +73,25 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+
 def new_listing(request):
     if request.method == "POST":
-        user = request.User
-        title = request.POST["title"]
-        description = request.POST["description"]
-        starting_bid = request.POST["starting_bid"]
-        category = request.POST["category"]
-        url = request.POST["url"]
-        auction_instance = Auction.objects.create(user=user,title=title,description=description,starting_bid=starting_bid,category=category,url=url)
-
-        return render(request, "auctions/index.html")
-    else:
-        return render(request, "auctions/new_listing.html",{
-            "categories": Category.objects.all(),
+        form = NewListingForm(request.POST)
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.user = request.user
+            form.price = form.starting_bid
+            form.save()
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            return render(request, "auctions/new_listing.html", {
+                "categories": Category.objects.all(),
+                "form": form,
+                "message": "The form is invalid",
             })
+    else:
+        form = NewListingForm()
+        return render(request, "auctions/new_listing.html", {
+            "categories": Category.objects.all(),
+            "form": form,
+        })
