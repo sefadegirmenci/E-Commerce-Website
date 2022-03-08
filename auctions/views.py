@@ -64,12 +64,13 @@ def register(request):
 
 def new_listing(request):
     if request.method == "POST":
+        user = request.User
         title = request.POST["title"]
         description = request.POST["description"]
         starting_bid = request.POST["starting_bid"]
         category = request.POST["category"]
         url = request.POST["url"]
-        auction_instance = Auction.objects.create(title=title,description=description,starting_bid=starting_bid,category=category,url=url)
+        auction_instance = Auction.objects.create(user=user,title=title,description=description,starting_bid=starting_bid,category=category,url=url)
 
         return render(request, "auctions/index.html")
     else:

@@ -10,6 +10,7 @@ class Category(models.Model):
     name = models.CharField(max_length=64)
 
 class Auction(models.Model):
+    user = models.ForeignKey(User,settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="users_auctions")
     title = models.CharField(max_length=32)
     description = models.TextField(max_length=1024)
     starting_bid = models.IntegerField()
@@ -19,12 +20,14 @@ class Auction(models.Model):
         return f"{self.user.name}: {self.title}"
 
 class Bid(models.Model):
+    user = models.ForeignKey(User,settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="users_bid")
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE,related_name="auctions_bid")
     amount = models.IntegerField()
     def __str__(self):
         return f"{self.user.name} {self.auction.title}: {self.amount}"
 
 class Comment(models.Model):
+    user = models.ForeignKey(User,settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="users_comment")
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE,related_name="auctions_comment")
     comment = models.TextField(max_length=1024)
     def __str__(self):
