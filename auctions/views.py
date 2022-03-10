@@ -101,7 +101,8 @@ def listing(request,id):
         listing = Auction.objects.filter(pk=id).first()
         in_watchlist = False
         if request.user is not None:
-            watchlist = listing.users.filter(pk=request.user.id).first()
+            # watchlist = listing.users.filter(pk=request.user.id).first()
+            watchlist = request.user.watchlist.filter(pk=id).first()
             if watchlist is not None:
                 in_watchlist = True
 
@@ -116,4 +117,5 @@ def add_watchlist(request,id):
     return HttpResponseRedirect(reverse("listing", args=(id,)))
 
 def remove_watchlist(request,id):
-    pass
+    request.user.watchlist.remove(id)
+    return HttpResponseRedirect(reverse("listing", args=(id,)))
