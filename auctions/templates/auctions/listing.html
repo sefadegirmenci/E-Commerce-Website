@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% if user.is_authenticated %}
+{% if in_watchlist %}
+<a href="{% url 'remove-watchlist' listing.id %}">Remove from watchlist</a>
+{% else %}
+<a href="{% url 'add-watchlist' listing.id %}">Add to watchlist</a>
+{% endif %}
+{% endif %}
+<br>
+<img src="{{listing.url}}" alt="{{listing.title}}" width="20px">
+<br>
+{{listing.title}}
+{{listing.description}}
+{{listing.price}}
+{% endblock %}

@@ -95,3 +95,25 @@ def new_listing(request):
             "categories": Category.objects.all(),
             "form": form,
         })
+
+def listing(request,id):
+    if request.method == "GET":
+        listing = Auction.objects.filter(pk=id).first()
+        in_watchlist = False
+        if request.user is not None:
+            watchlist = listing.users.filter(pk=request.user.id).first()
+            if watchlist is not None:
+                in_watchlist = True
+
+        return render(request, "auctions/listing.html", {
+            "listing":listing,
+            "in_watchlist": in_watchlist,
+        })
+    return render(request, "auctions/listing.html")
+
+def add_watchlist(request,id):
+    request.user.watchlist.add(id)
+    return HttpResponseRedirect(reverse("listing", args=(id,)))
+
+def remove_watchlist(request,id):
+    pass
