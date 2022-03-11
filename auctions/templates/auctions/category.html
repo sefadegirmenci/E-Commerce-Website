@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{%if items%}
+<h2>Items in {{category.name}}</h2>
+<div class="container m-0 p-0">
+    <div class="row mt-3">
+        {% for item in items %}
+        <div class="col-3 myclass">
+            <a href="{% url 'listing' item.id %}">
+                <div class="row text-center">
+                    <div class="col-12">
+                        <img src="{{item.url}}" alt="listing image" height="100vh" >
+                    </div>
+                    <div class="col-12">
+                        <h3>{{item.title}}</h3>
+                        <p>{{item.description}}</p>
+                        <p>Price: {{item.bid.amount}}€</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{%else%}
+<h2>No listing available</h2>
+{%endif%}
+{% endblock %}

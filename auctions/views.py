@@ -164,3 +164,17 @@ def watchlist(request):
     watchlist= request.user.watchlist.all()
     return render(request, "auctions/watchlist.html",
         {'watchlist':watchlist})
+
+def categories(request):
+    categories = Category.objects.all()
+    return render(request, "auctions/categories.html",{
+        "categories": categories
+    })
+
+def specific_category(request,id):
+    category = Category.objects.get(pk=id)
+    items = category.auctions_category.all()
+    return render(request, "auctions/category.html",{
+        "items": items,
+        "category": category
+    })
