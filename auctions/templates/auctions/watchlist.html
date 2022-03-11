@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            {% for item in watchlist %}
+                <strong> 
+                    {{item.title}}
+                </strong>
+                </br>
+                {{item.description}}
+                </br>   
+                {{item.bid.amount}}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

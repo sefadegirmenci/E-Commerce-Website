@@ -159,3 +159,8 @@ def new_comment(request,id):
         comment.save()
 
     return HttpResponseRedirect(reverse("listing", args=(id,)))
+
+def watchlist(request):
+    watchlist= request.user.watchlist.all()
+    return render(request, "auctions/watchlist.html",
+        {'watchlist':watchlist})
