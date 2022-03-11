@@ -8,10 +8,26 @@
 <a href="{% url 'add-watchlist' listing.id %}">Add to watchlist</a>
 {% endif %}
 {% endif %}
-<br>
-<img src="{{listing.url}}" alt="{{listing.title}}" width="20px">
-<br>
-{{listing.title}}
-{{listing.description}}
-{{listing.price}}
+<div class="container m-0 p-0">
+<div class="row">
+    <div class="col-3">
+        <img src="{{listing.url}}" alt="{{listing.title}}" height="80vh">
+        
+        {{listing.title}}
+        {{listing.description}}
+    {% if user.is_authenticated %}   
+        <form action="{% url 'new-bidding' listing.id %}" method="post">
+            {% csrf_token %}
+            <input type="number" name="new-bid" value="{{listing.bid.amount}}">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        {% if message %}
+        {{message}}
+        {% endif %}
+    {% endif %}
+    </div>
+</div>
+</div>
+
+
 {% endblock %}
