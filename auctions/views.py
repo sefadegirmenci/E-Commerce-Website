@@ -4,6 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.forms import ModelForm
+from django.contrib.auth.decorators import login_required
+
 
 from .models import Auction, Bid, Comment, User, Category
 from django import forms
@@ -76,7 +78,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-
+@login_required
 def new_listing(request):
     if request.method == "POST":
         form = NewListingForm(request.POST)
@@ -122,17 +124,17 @@ def listing(request, id):
         })
     return render(request, "auctions/listing.html")
 
-
+@login_required
 def add_watchlist(request, id):
     request.user.watchlist.add(id)
     return HttpResponseRedirect(reverse("listing", args=(id,)))
 
-
+@login_required
 def remove_watchlist(request, id):
     request.user.watchlist.remove(id)
     return HttpResponseRedirect(reverse("listing", args=(id,)))
 
-
+@login_required
 def new_bidding(request, id):
     if request.method == "POST":
         new_bid_amount = int(request.POST.get("new-bid"))
@@ -155,6 +157,7 @@ def new_bidding(request, id):
     else:
         return HttpResponseRedirect(reverse("listing", args=(id,)))
 
+@login_required
 def new_comment(request,id):
     if request.method == "POST":
         text = request.POST.get("comment")
@@ -164,6 +167,7 @@ def new_comment(request,id):
 
     return HttpResponseRedirect(reverse("listing", args=(id,)))
 
+@login_required
 def watchlist(request):
     watchlist= request.user.watchlist.all()
     return render(request, "auctions/watchlist.html",
