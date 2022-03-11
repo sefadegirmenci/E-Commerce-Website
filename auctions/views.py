@@ -12,7 +12,10 @@ from django import forms
 class NewListingForm(ModelForm):
     class Meta:
         model = Auction
-        exclude = ['user', 'bid', ]
+        exclude = ['user', 'bid' ]
+        widget = { 
+            forms.Select(),}
+    
 
 
 def index(request):
@@ -80,10 +83,11 @@ def new_listing(request):
         if form.is_valid():
             bid = Bid(user=request.user, amount=form.cleaned_data['starting_bid'])
             bid.save()
-            form = form.save(commit=False)
-            form.user = request.user
-            form.bid = bid
-            form.save()
+            event = form.save(commit=False)
+            event.user = request.user
+            event.bid = bid
+            event.save()
+            form.save_m2m()
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "auctions/new_listing.html", {
