@@ -12,19 +12,35 @@
 <div class="row">
     <div class="col-3">
         <img src="{{listing.url}}" alt="{{listing.title}}" height="80vh">
-        
+        {% if owner_of_item %}
+            Close
+        {% endif %}
         {{listing.title}}
         {{listing.description}}
-    {% if user.is_authenticated %}   
+        {% if user.is_authenticated %}   
         <form action="{% url 'new-bidding' listing.id %}" method="post">
             {% csrf_token %}
             <input type="number" name="new-bid" value="{{listing.bid.amount}}">
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+
+        {% for comment_entry in listing.comments.all %}
+        <div>
+            <strong>{{comment_entry.user.username}}</strong>
+            {{comment_entry.comment}} {{comment_entry.date_added}}
+        </div>
+        {% endfor %}
+
+        <form action="{% url 'new-comment' listing.id%}" method="post">
+            {% csrf_token %}
+            <textarea name="comment" cols="20" rows="5"></textarea>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-comment" aria-hidden="true"></i>
+                Comment</button>
+        </form>
+        {% endif %}
         {% if message %}
         {{message}}
         {% endif %}
-    {% endif %}
     </div>
 </div>
 </div>

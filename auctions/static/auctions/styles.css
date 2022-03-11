@@ -7,9 +7,9 @@ ol{
     list-style: none;
 }
 
-a, a:hover, a:focus, a:active {
-    text-decoration: none;
-    color: inherit;
+a, a:hover, a:focus, a:active, a:link, a:visited, u {
+    text-decoration: none !important;
+    color: inherit !important;
 }
 
 img { width: 100%; }

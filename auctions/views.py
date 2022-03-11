@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.forms import ModelForm
 
-from .models import Auction, Bid, User, Category
+from .models import Auction, Bid, Comment, User, Category
 from django import forms
 
 
@@ -103,15 +103,18 @@ def listing(request, id):
     if request.method == "GET":
         listing = Auction.objects.filter(pk=id).first()
         in_watchlist = False
+        owner_of_item = False
         if request.user is not None:
             # watchlist = listing.users.filter(pk=request.user.id).first()
             watchlist = request.user.watchlist.filter(pk=id).first()
             if watchlist is not None:
                 in_watchlist = True
-
+            if Auction.objects.get(pk=id).user == request.user :
+                owner_of_item=True
         return render(request, "auctions/listing.html", {
             "listing": listing,
             "in_watchlist": in_watchlist,
+            "owner_of_item": owner_of_item,
         })
     return render(request, "auctions/listing.html")
 
@@ -147,3 +150,12 @@ def new_bidding(request, id):
             return HttpResponseRedirect(reverse("listing", args=(id,)))
     else:
         return HttpResponseRedirect(reverse("listing", args=(id,)))
+
+def new_comment(request,id):
+    if request.method == "POST":
+        text = request.POST.get("comment")
+        auction = Auction.objects.get(pk=id)
+        comment = Comment(user=request.user,auction=auction,comment=text)
+        comment.save()
+
+    return HttpResponseRedirect(reverse("listing", args=(id,)))
